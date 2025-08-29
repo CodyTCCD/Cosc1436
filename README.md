@@ -6,7 +6,7 @@ This repository is where your classwork and lab assignments will go.
 
 Refer to the [Setup](docs/setup) section for important information on how to properly set up your computer for this course.
 
-## Getting Started
+## Getting Started 
 
 Refer to the [Getting Started](docs/gettingstarted) guide for help on using the tools in this class.
 
