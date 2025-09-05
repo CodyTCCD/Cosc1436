@@ -44,4 +44,59 @@ int main()
     std::string name;
     name = "Cody";
     std::cout << "Hello World " << name;
+
+    //var-decl ::=T id;
+    //type = defines what can be stored in the variable and in what format
+    int age;
+    age = 20;
+    std::cout << "you are " << age << " years old";
+
+
+    // area of rectangle calculator (length x width)
+    // A = lw
+    std::string firstname;
+    //int length; 
+    //int width;
+    int length = 10, width = 20;
+
+    //length = 10; 
+    //width = 20; 
+
+    //uninitilized variable - YOU MUST assign a value to a variable before you read it   
+    //int area;
+    //area = 0;
+    int area = 0;
+    //area = length * width;
+
+    std::cout << "Area of rectangle is " << area << std::endl;
+
+    //2 different approches of variable declaration
+    //Block - all variables together
+    //int radius, diameter;
+    //std::string circlename;
+
+    //now i can use the variables
+    int radius, diameter;
+    //use radius, diameter
+
+    std::string circlename;
+    //use circlename
+
+
+
+    double pi; 
+    pi = 3.1459;
+
+    char LetterGrade;
+    letterGrade = 'A';
+
+    bool isPassing;
+    isPassing = true;
+
+    //assignment is right associative (reads right to left)
+    //length = 100;
+    //width = 100;
+    length=width=100
+
+
 }
