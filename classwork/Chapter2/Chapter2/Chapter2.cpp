@@ -4,6 +4,7 @@
 * COSC 1436 fALL 2025
 */
 #include <iostream>
+#include <string>
 //#=preprocessor directive
 int main()
 {
@@ -87,16 +88,70 @@ int main()
     double pi; 
     pi = 3.1459;
 
-    char LetterGrade;
+    char letterGrade;
     letterGrade = 'A';
 
     bool isPassing;
     isPassing = true;
-
+    area = length * width;
     //assignment is right associative (reads right to left)
     //length = 100;
     //width = 100;
-    length=width=100
+    length = width = 100;
+
+    //std::cout << length; //verify length is correct
+
+
+
+
+
+
+
+    //arithmetic operators
+    // arith_op :: + | - | * | /(divide is slash) | %
+    length = length + 10;
+    width = width - 20;
+
+    //int divisuib ::= int / int produces an int, remainder is lost
+    int result = 10 / 3; // = 3 (keeps it whole number. is called integer division)
+   
+    // modulus is remainder and ONLY works for integral types
+    int remainder = 10 % 3; // = 1
+
+    int negativelength = -length;
+
+    //scope - lifetime of a variable 
+    { //starting a new block
+        int newVariable1 = 10;
+        double newvariable2 = 45.7;
+      //any variables decared in a block (the curly braces)
+    };
+    {
+      //  char newVariable1 +'A';
+    }
+  //std::cout << newVariable1;
+
+//strings C++ 
+    // assign value using assignment operator
+  std::string studentName;
+  studentName = "Bob";
+
+  studentName = studentName + " Wilson";
+
+  //literal - great for static values
+  //variables - great for writable values
+//named constant - variable that has a constant value
+  const double pi = 3.14159;
+
+  // A = Pi *R^2
+  double areaCircle = pi * (radius * radius);
+
+  const int NumberOfLabGrades = 5;
+  const int NumberOfExamGrades = 4;
+
+  //cannot write to a constant
+ // Pi = 140;
+
 
 
 }
