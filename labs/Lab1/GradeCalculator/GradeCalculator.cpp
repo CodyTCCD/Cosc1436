@@ -10,44 +10,84 @@ COSC 1436 FALL 2025
 
 
 
-int main()
+void main()
 {
+    double labGrade1 = 0, labGrade2 = 0;
+    double labGrade3 = 0, labGrade4 = 0;
+    double examGrade1 = 0, examGrade2 = 0;
+    double examGrade3 = 0, participationGrade = 0;
+    double finalExamGrade = 0;
 
-    std::cout << "Please enter your name:\n";
-    std::cout << "Please enter lab 1:\n";
-    std::cout << "Please enter lab 2:\n";
-    std::cout << "Please enter lab 3:\n";
-    std::cout << "Please enter lab 4:\n";
-    std::cout << "Please enter exam 1:\n";
-    std::cout << "Please enter exam 2:\n";
-    std::cout << "Please enter exam 3:\n";
-    std::cout << "Please enter participation:\n";
-    std::cout << "Please enter final exam:\n";
+
+
+
+
+
+
+    
+    std::cout << "Please enter your name: ";
+    std::string userName;
+    std::getline(std::cin, userName);
+    //user input for name and sets up showing name throughout the project
+
+    std::cout << "Please enter lab 1: ";
+    std::cin >> labGrade1;
+    std::cout << "Please enter lab 2: ";
+    std::cin >> labGrade2;
+    std::cout << "Please enter lab 3: ";
+    std::cin >> labGrade3;
+    std::cout << "Please enter lab 4: ";
+    std::cin >> labGrade4;
+    //user inputs for lab grades
+
+    std::cout << "Please enter exam 1: ";
+    std::cin >> examGrade1;
+    std::cout << "Please enter exam 2: ";
+    std::cin >> examGrade2;
+    std::cout << "Please enter exam 3: ";
+    std::cin >> examGrade3;
+    //user inputs for exam grades
+
+    std::cout << "Please enter participation: ";
+    std::cin >> participationGrade;
+    //user input for participation grade
+
+    std::cout << "Please enter final exam: ";
+    std::cin >> finalExamGrade; 
+    //user input for final exam grade
+
     std::cout << "\n";
-    std::cout << " , your lab grades are:\n";
-        //Need to learn how to input the name prompted in "Enter your name"
-    std::cout << "Lab 1 = \n";
-    std::cout << "Lab 2 = \n";
-    std::cout << "Lab 3 = \n";
-    std::cout << "Lab 4 = \n";
-        //Need to learn how to input grades user entered in user input
+    std::cout << userName << ", your lab grades are: \n";
+ 
+    std::cout << "Lab 1 = " << labGrade1 << std::endl;
+    std::cout << "Lab 2 = " << labGrade2 << std::endl; 
+    std::cout << "Lab 3 = " << labGrade3 << std::endl;
+    std::cout << "Lab 4 = " << labGrade4 << std::endl;
+    //shows the user their lab grades before calculation
+  
     std::cout << "\n";
-    std::cout << " , your exam grades are:\n";
-    std::cout << "Exam 1 = \n";
-    std::cout << "Exam 2 = \n";
-    std::cout << "Exam 3 = \n";
+    std::cout << userName << ", your exam grades are: \n";
+    std::cout << "Exam 1 = " << examGrade1 << std::endl;
+    std::cout << "Exam 2 = " << examGrade2 << std::endl;
+    std::cout << "Exam 3 = " << examGrade3 << std::endl;
+    //shows the user their exam grades before calculation
+
     std::cout << "\n";
-    std::cout << " , your other grades are:\n";
+    std::cout << userName << ", your other grades are: \n";
+
     std::cout << "Participation = \n";
     std::cout << "Final Exam = \n";
-    std::cout << "\n";
-    std::cout << " , your class grade is:\n";
+    //shows the user their participation and final exam before calculation
+
+    std::cout << std::endl;
+    std::cout << userName << ", your class grade is: \n";
+
     std::cout << "Lab Average (65%) = \n";
     std::cout << "Exam Average (20%) = \n";
     std::cout << "Participation (5%) = \n";
     std::cout << "Final Exam (10%) = \n";
     std::cout << "Class Average = \n";
-        //Need to learn how to input the math that will be run here
+    //shows the user all of their caclulated grades
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
