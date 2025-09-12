@@ -90,7 +90,7 @@ int main()
     //shows the participation and final exam again for clarification to user
 
     //calculate Class Average
-    calcClassAverage = (calcLabGrade * 13 / 20) + (calcExamGrade * 1 / 5) + (participationGrade * 1 / 20) + (finalExamGrade * 1 / 10);
+    calcClassAverage = (calcLabGrade * .65) + (calcExamGrade * .2) + (participationGrade * .05) + (finalExamGrade * .1);
 
     std::cout << "Class Average = " << calcClassAverage << " % " << std::endl;
     //shows the user their overall class average
