@@ -5,23 +5,18 @@ COSC 1436 FALL 2025
 */
 #include <iostream>
 #include <string>
-// GradeCalculator.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
 
 
-void main()
+int main()
 {
     double labGrade1 = 0, labGrade2 = 0;
     double labGrade3 = 0, labGrade4 = 0;
     double examGrade1 = 0, examGrade2 = 0;
     double examGrade3 = 0, participationGrade = 0;
     double finalExamGrade = 0;
-
-
-
-
-
+    double calcLabGrade = 0, calcExamGrade = 0;
+    double calcClassAverage = 0;
 
 
     
@@ -50,14 +45,12 @@ void main()
 
     std::cout << "Please enter participation: ";
     std::cin >> participationGrade;
-    //user input for participation grade
-
     std::cout << "Please enter final exam: ";
     std::cin >> finalExamGrade; 
-    //user input for final exam grade
+    //user input for participation and final exam grade
 
-    std::cout << "\n";
-    std::cout << userName << ", your lab grades are: \n";
+    std::cout << std::endl;
+    std::cout << userName << ", your lab grades are: " << std::endl;
  
     std::cout << "Lab 1 = " << labGrade1 << std::endl;
     std::cout << "Lab 2 = " << labGrade2 << std::endl; 
@@ -65,38 +58,41 @@ void main()
     std::cout << "Lab 4 = " << labGrade4 << std::endl;
     //shows the user their lab grades before calculation
   
-    std::cout << "\n";
+    std::cout << std::endl;
     std::cout << userName << ", your exam grades are: \n";
     std::cout << "Exam 1 = " << examGrade1 << std::endl;
     std::cout << "Exam 2 = " << examGrade2 << std::endl;
     std::cout << "Exam 3 = " << examGrade3 << std::endl;
     //shows the user their exam grades before calculation
 
-    std::cout << "\n";
-    std::cout << userName << ", your other grades are: \n";
+    std::cout << std::endl;
+    std::cout << userName << ", your other grades are: " << std::endl;
 
-    std::cout << "Participation = \n";
-    std::cout << "Final Exam = \n";
-    //shows the user their participation and final exam before calculation
+    std::cout << "Participation = " << participationGrade << std::endl;
+    std::cout << "Final Exam = " << finalExamGrade << std::endl;
+    //shows the user their participation and final exam
 
     std::cout << std::endl;
-    std::cout << userName << ", your class grade is: \n";
+    std::cout << userName << ", your class grade is: " << std::endl;
 
-    std::cout << "Lab Average (65%) = \n";
-    std::cout << "Exam Average (20%) = \n";
-    std::cout << "Participation (5%) = \n";
-    std::cout << "Final Exam (10%) = \n";
-    std::cout << "Class Average = \n";
+    //calculate lab average
+    calcLabGrade = (labGrade1 + labGrade2 + labGrade3 + labGrade4) / 4;
+
+    std::cout << "Lab Average (65%) = " << calcLabGrade << " % " << std::endl;
+
+    //calculate exam average
+    calcExamGrade = (examGrade1 + examGrade2 + examGrade3) / 3;
+
+    std::cout << "Exam Average (20%) = " << calcExamGrade << " % " << std::endl;
+
+    std::cout << "Participation (5%) = " << participationGrade << " % " << std::endl;
+    std::cout << "Final Exam (10%) = " << finalExamGrade << " % " << std::endl;
+    //shows the participation and final exam again for clarification to user
+
+    //calculate Class Average
+    calcClassAverage = (calcLabGrade * 13 / 20) + (calcExamGrade * 1 / 5) + (participationGrade * 1 / 20) + (finalExamGrade * 1 / 10);
+
+    std::cout << "Class Average = " << calcClassAverage << " % " << std::endl;
+    //shows the user their overall class average
     //shows the user all of their caclulated grades
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
