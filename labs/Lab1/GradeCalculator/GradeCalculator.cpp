@@ -10,12 +10,12 @@ COSC 1436 FALL 2025
 
 int main()
 {
-    double labGrade1 = 0, labGrade2 = 0;
-    double labGrade3 = 0, labGrade4 = 0;
-    double examGrade1 = 0, examGrade2 = 0;
-    double examGrade3 = 0, participationGrade = 0;
-    double finalExamGrade = 0;
-    double calcLabGrade = 0, calcExamGrade = 0;
+    int labGrade1 = 0, labGrade2 = 0;
+    int labGrade3 = 0, labGrade4 = 0;
+    int examGrade1 = 0, examGrade2 = 0;
+    int examGrade3 = 0, participationGrade = 0;
+    int finalExamGrade = 0;
+    int calcLabGrade = 0, calcExamGrade = 0;
     double calcClassAverage = 0;
 
 
