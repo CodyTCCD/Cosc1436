@@ -5,6 +5,8 @@ COSC 1436 FALL 2025
 */
 #include <iostream>
 #include <string>
+#include <iomanip> 
+//Needed for fixed and setprecision
 
 
 
@@ -15,9 +17,15 @@ int main()
     int examGrade1 = 0, examGrade2 = 0;
     int examGrade3 = 0, participationGrade = 0;
     int finalExamGrade = 0;
-    int calcLabGrade = 0, calcExamGrade = 0;
+    double calcLabGrade = 0, calcExamGrade = 0;
     double calcClassAverage = 0;
+    //last 3 are double for weighted results (97.88)
 
+    std::cout << "Lab 1 - Grade Calculator" << std::endl;
+    std::cout << "Cody Price" << std::endl;
+    std::cout << "COSC 1436 Fall 2025" << std::endl;
+    std::cout << std::endl;
+    //Program for the header
 
     
     std::cout << "Please enter your name: ";
@@ -75,24 +83,27 @@ int main()
     std::cout << std::endl;
     std::cout << userName << ", your class grade is: " << std::endl;
 
-    //calculate lab average
-    calcLabGrade = (labGrade1 + labGrade2 + labGrade3 + labGrade4) / 4;
+     //set output to be fixed to 2 decimal points
+    std::cout << std::fixed << std::setprecision(2);
 
-    std::cout << "Lab Average (65%) = " << calcLabGrade << " % " << std::endl;
+    //calculate lab average
+    calcLabGrade = (labGrade1 + labGrade2 + labGrade3 + labGrade4) / 4.0;
+
+    std::cout << "Lab Average (65%) = " << calcLabGrade << " %" << std::endl;
 
     //calculate exam average
-    calcExamGrade = (examGrade1 + examGrade2 + examGrade3) / 3;
+    calcExamGrade = (examGrade1 + examGrade2 + examGrade3) / 3.0;
 
-    std::cout << "Exam Average (20%) = " << calcExamGrade << " % " << std::endl;
+    std::cout << "Exam Average (20%) = " << calcExamGrade << " %" << std::endl;
 
-    std::cout << "Participation (5%) = " << participationGrade << " % " << std::endl;
-    std::cout << "Final Exam (10%) = " << finalExamGrade << " % " << std::endl;
+    std::cout << "Participation (5%) = " << participationGrade << " %" << std::endl;
+    std::cout << "Final Exam (10%) = " << finalExamGrade << " %" << std::endl;
     //shows the participation and final exam again for clarification to user
 
     //calculate Class Average
     calcClassAverage = (calcLabGrade * .65) + (calcExamGrade * .2) + (participationGrade * .05) + (finalExamGrade * .1);
 
-    std::cout << "Class Average = " << calcClassAverage << " % " << std::endl;
+    std::cout << "Class Average = " << calcClassAverage << " %" << std::endl;
     //shows the user their overall class average
     //shows the user all of their caclulated grades
 }
