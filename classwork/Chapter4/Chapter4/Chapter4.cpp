@@ -22,6 +22,24 @@ int main()
     std::cout << "Postfix (x++) = " << number++ << ", x = " << number << std::endl;
     std::cout << "Postfix (x--) = " << number-- << ", x = " << number << std::endl;*/
 
+    //demo nested loops 10x12 = 120
+    // 1 2 3 4 5 
+    // 1 1 2 3 4 5 
+    // 2 2 4 6 8 10
+    // 3 3 6 9 12 15
+   /* for (int rows = 1; rows <= 100; ++rows)
+    {
+        for (int cols = 1; cols <= 50; ++cols)
+        {
+            if (cols != 0)
+                std::cout << std::setw(4) << (rows * cols);
+            else
+                std::cout << cols;
+        }
+        
+        std::cout << std::endl; 
+    }*/
+
     // Looping construct
     //    while-statement ::= while (Eb) S;
     //      Pre-test, evaluates Eb and executes S if true
@@ -29,7 +47,7 @@ int main()
     // 
     //Display main menu
     bool done = false;
-    while (!done)
+    do /*while (!done)*/
     {
         std::cout << "Movie Library" << std::endl;
         std::cout << "--------------" << std::endl;
@@ -102,7 +120,7 @@ int main()
 
             default: std::cout << "Invalid choice" << std::endl; break;
         };
-    }
+    } while (!done);
 
     //Movie details
     std::string title;          //Required
@@ -136,14 +154,19 @@ int main()
             std::cout << "ERROR: Run length must be at least 0" << std::endl;
     }*/
     std::cin >> runLength;
-    while (runLength < 0)
+    do //   while (runLength < 0)
     {
-        //Error
-        std::string message = "Run length must be at least 0";
-        std::cout << "ERROR: " << message << std::endl;
-
         std::cin >> runLength;
-    }
+
+        //Error
+        if (runLength < 0)
+        {
+            std::string message = "Run length must be at least 0";
+            std::cout << "ERROR: " << message << std::endl;
+        }
+
+        //std::cin >> runLength;
+    } while (runLength < 0);
 
     std::cout << "Enter the release year (1900-2100): ";
     std::cin >> releaseYear;
