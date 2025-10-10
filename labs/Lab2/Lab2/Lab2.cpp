@@ -57,7 +57,7 @@ int main()
 
     // Display Header
     std::cout << std::endl;
-    std::cout << "Month     Balance     Payment     Interest        New Balance" << std::endl;
+    std::cout << "Month   Balance       Payment      Interest     New Balance" << std::endl;
     std::cout << "_________________________________________________________________" << std::endl;
 
     // Set decimal places to 2
@@ -112,7 +112,7 @@ int main()
     }
 
     // Display totals to user
-    std::cout << "Total                  $" << totalPayments
-        << "       $" << totalInterest << std::endl;
+    std::cout << "Total                 $" << totalPayments
+        << "    $" << totalInterest << std::endl;
 
 }
