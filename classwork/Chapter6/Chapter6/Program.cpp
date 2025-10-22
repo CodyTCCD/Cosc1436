@@ -17,7 +17,8 @@ struct Movie
     std::string genres;         //Optional (comma separated list of genres)
 };
 
-int g_thisIsAGlobalVariable = 100; //This is just an example. NEVER use global variables in ANY project
+//DO NOT DO THIS!!!
+//int g_thisIsAGlobalVariable = 100;
 
 /// <summary>Defines possible foreground colors.</summary>
 enum class ForegroundColor {
@@ -33,7 +34,7 @@ enum class ForegroundColor {
 };
 
 //Function prototypes
-//Forward declarations/referencing 
+//Forward declarations/referencing
 void DisplayError(std::string);
 
 void ResetTextColor()
@@ -46,12 +47,12 @@ void SetTextColor(ForegroundColor color)
     std::cout << "\033[" << (int)color << "m";
 }
 
-/// <summary>Display a confirmation message. </summary>
+/// <summary>Display a confirmation message.</summary>
 /// <param name="message">Message to show.</param>
-/// <returns>Returns true or false depending on whther confirmed or not.</returns>
+/// <returns>Returns true or false depending on whether confirmed or not.</returns>
 bool Confirm(std::string message)
 {
-    std::cout << message << " Y / N ) ";
+    std::cout << message << " (Y/N) ";
     std::string input;
     std::cin >> input;
 
@@ -88,7 +89,26 @@ void DisplayWarning(std::string message)
     ResetTextColor();
 }
 
-std::string ReadString( std::string message, bool isRequired )
+int ReadInt(int minimumValue, int maximumValue)
+{
+    do
+    {
+        int value;
+        std::cin >> value;
+
+        if (value >= minimumValue && value <= maximumValue)
+            return value;
+
+        DisplayError("Value is outside range");
+    } while (true);
+}
+
+int ReadInt(int minimumValue)
+{
+    return ReadInt(minimumValue, INT_MAX);
+}
+
+std::string ReadString(std::string message, bool isRequired)
 {
     std::cout << message;
 
@@ -102,7 +122,7 @@ std::string ReadString( std::string message, bool isRequired )
         std::getline(std::cin, input);
     }
 
-    return input; 
+    return input;
 }
 
 /// <summary>View details of a movie.</summary>
@@ -111,6 +131,12 @@ std::string ReadString( std::string message, bool isRequired )
 /// </remarks>
 void ViewMovie(Movie movie)
 {
+    if (movie.title == "")
+    {
+        DisplayWarning("No movies exist");
+            return;
+    }
+
     // View movie
     //    Title (Year)
     //    Run Length # min
@@ -128,7 +154,7 @@ void ViewMovie(Movie movie)
 }
 
 /// <summary>Prompt user and add movie details.</summary>
-Movie AddMovie ()
+Movie AddMovie()
 {
     Movie movie;// = {0};
 
@@ -136,24 +162,11 @@ Movie AddMovie ()
     movie.title = ReadString("Enter movie title: ", true);
 
     std::cout << "Enter the run length (in minutes): ";
-    do
-    {
-        std::cin >> movie.runLength;
-
-        //Error
-        if (movie.runLength < 0)
-            DisplayError("Run length must be at least 0");
-
-    } while (movie.runLength < 0);
+    movie.runLength = ReadInt(0);
 
     std::cout << "Enter the release year (1900-2100): ";
     std::cin >> movie.releaseYear;
-    while (movie.releaseYear < 1900 || movie.releaseYear > 2100)
-    {
-        DisplayError("Release year must be between 1900 and 2100");
-
-        std::cin >> movie.releaseYear;
-    }
+    movie.releaseYear = ReadInt(1900, 2100);
 
     movie.description = ReadString("Enter the optional description: ", false);
 
@@ -161,7 +174,6 @@ Movie AddMovie ()
     for (int index = 0; index < 5; ++index)
     {
         std::string genre = ReadString("Enter the genre (or blank to continue): ", false);
-
         if (genre == "")
             break;
         else if (genre == " ")
@@ -171,19 +183,21 @@ Movie AddMovie ()
     }
 
     movie.isClassic = Confirm("Is this a classic movie?");
-    return movie; 
+
+    return movie;
 }
 
-void DeleteMovie(Movie movie)
+void DeleteMovie(Movie& movie)
 {
-    if (Confirm("Are you sure you want to delete " + movie.title + "?"))
+    if (!Confirm("Are you sure you want to delete " + movie.title + "?"))
         return;
 
-//TODO: Delete Movie
-    DisplayWarning("Not implemented yet");
+    //TODO: Delete movie
+   // DisplayWarning("Not implemented yet");
+    movie.title = ""; 
 }
 
-void EditMovie(Movie movie)
+void EditMovie(Movie& movie)
 {
     DisplayWarning("Not implemented yet");
 }
@@ -191,6 +205,7 @@ void EditMovie(Movie movie)
 int main()
 {
     //Display main menu
+    Movie movie; 
     bool done = false;
     do
     {
@@ -204,8 +219,6 @@ int main()
 
         char choice;
         std::cin >> choice;
-
-        Movie movie;
 
         switch (choice)
         {
