@@ -56,6 +56,23 @@ double ConvertMetersToFeet(double meters)
     return feet;
 }
 
+/// <summary>Calculates the velocity for a given time in seconds.</summary>
+/// <param name="time">The time in seconds.</param>
+/// <returns>The velocity in meters per second, capped at 90 m/s.</returns>
+double CalculateVelocity(int time)
+{
+    const double gravity = 9.8;
+    double velocity = gravity * time;
+
+    //Cap velocity at terminal speed
+    if (velocity > 90)
+    {
+        velocity = 90;
+    }
+
+    return velocity;
+}
+
 /// <summary>Prompts the user to select units (meters or feet).</summary>
 /// <returns>'m' for meters or 'f' for feet.</returns>
 char GetUnitSelection()
@@ -91,11 +108,12 @@ void DisplayResults(int time, char unit)
     int seconds[60];
     double distances[60];
     double convertedDistances[60];
+    double velocities[60];
 
     //Display header
     std::cout << std::endl;
-    std::cout << "Seconds      Distance" << std::endl;
-    std::cout << "=====================" << std::endl;
+    std::cout << "Seconds      Distance       Velocity" << std::endl;
+    std::cout << "====================================" << std::endl;
 
     std::cout << std::fixed << std::setprecision(2);
 
@@ -104,6 +122,7 @@ void DisplayResults(int time, char unit)
     {
         seconds[index] = index + 1;
         distances[index] = CalculateFallingDistance(seconds[index]);
+        velocities[index] = CalculateVelocity(seconds[index]);
 
         if (unit == 'f')
         {
@@ -113,7 +132,7 @@ void DisplayResults(int time, char unit)
             convertedDistances[index] = distances[index];
         }
 
-        //Display each row
+       //Display each row of table
         std::cout << std::setw(4) << seconds[index]
             << std::setw(14) << convertedDistances[index];
 
@@ -123,6 +142,16 @@ void DisplayResults(int time, char unit)
         } else
         {
             std::cout << " ft";
+        }
+
+        std::cout << std::setw(12) << velocities[index];
+
+        if (unit == 'm')
+        {
+            std::cout << " m/s";
+        } else
+        {
+            std::cout << " ft/s";
         }
 
         std::cout << std::endl;
@@ -135,16 +164,16 @@ int main()
     int time = 0;
     char unit = 'm';
 
-    //Story 1 - Display program information
+    //Display program information
     DisplayProgramInfo();
 
-    //Story 2 - Get falling time from user
+    //Get falling time from user
     time = ReadFallingTime();
 
-    //Story 5 - Ask user for desired units
+    //Ask user for desired units
     unit = GetUnitSelection();
 
-    //Story 3 & 4 - Calculate and display distances
+    //Calculate and display distances
     DisplayResults(time, unit);
 
     return 0;
