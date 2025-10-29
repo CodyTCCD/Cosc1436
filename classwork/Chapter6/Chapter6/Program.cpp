@@ -239,7 +239,7 @@ void Display(short, int)
 }
 
 //void TestFunctionOverloading()
-//{
+//{ 
 //    Display(10);   //Display(int)
 //    Display(4.56); // Display(double)
 //    Display((short)34);  // Display(int) -> shortest type coercion
@@ -255,15 +255,69 @@ void Display(short, int)
 //    Display((short)5, (short)10);
 //}
 
+int Factorial(int value)
+{
+    if (value <= 1)
+        return 1;
+
+    return value * Factorial(value - 1);
+}
+
+void ArrayDemo()
+{
+    const int MaxNumbers = 100;
+
+    //Init arrray using { 0 }
+    int numbers[MaxNumbers];
+     //int numbers[100];
+
+    //# of days in each momth
+    int daysInMonth[12] = {0};
+    //Approach 1 - correct but not readable
+    /*daysInMonth[0] = daysInMonth[2] = daysInMonth[4] = daysInMonth[6] = daysInMonth[7]
+                   = daysInMonth[9] = daysInMonth[11] = 31;
+    daysInMonth[1] = 28;
+    daysInMonth[3] = daysInMonth[5] = daysInMonth[8] = daysInMonth[10] = 30;*/
+
+    //Approach 2- init expression
+    // zero init - each element is set to 0// { 0 }
+    //Full init - each element is assigned a value 
+    // PArtial init - each elemenet is assigned a value and remaining elements are 0 initialized
+    int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31 ,30, 31}; 
+
+    //implicit array sizing
+    int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31 ,30, 31};
+
+    //set each element to its element number (element 1 =1, element 2 = 2, etc)
+    //Approach 1, for small arrays only
+    numbers[0] = 1;
+    numbers[1] = 2;
+    numbers[2] = 3; //etc
+
+    //Approach 2, for any array
+    for (int index = 0; index < MaxNumbers; ++index)
+        numbers[index] = index + 1;
+
+    for (int index = 0; index < MaxNumbers; ++index)
+        std::cout << numbers[index] << std::endl;
+}
+
 int main()
 {
+    ArrayDemo();
+    //std::cout << Factorial(5) << std::endl;
+
     //Cannot calculate the size of an array at runtime so use a const int variable
     const int MaximumMovies = 100;
 
-    //Leaving this for now to avoid breaking code
+    //TODO: Leaving this for now to avoid breaking code
     Movie movie;
     Movie movies[MaximumMovies];
 
+    //Array operator []
+   // A[index]
+    Movie firstElement = movies[0];
+    
     //Display main menu
     bool done = false;
     do
