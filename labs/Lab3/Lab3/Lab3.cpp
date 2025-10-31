@@ -52,7 +52,7 @@ double CalculateFallingDistance(int time)
 /// <returns>The distance in feet.</returns>
 double ConvertMetersToFeet(double meters)
 {
-    double feet = meters * 3.281;
+    double feet = meters * 3.28084;
     return feet;
 }
 
@@ -153,7 +153,7 @@ void DisplayResults(int time, char unit)
         {
             std::cout << " ft/s";
         }
-
+        
         std::cout << std::endl;
     }
 }
