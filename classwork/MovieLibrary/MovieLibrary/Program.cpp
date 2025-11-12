@@ -85,6 +85,10 @@ void DisplayWarning(std::string message)
     ResetTextColor();
 }
 
+/// <summary>Reads an integer from the terminal.</summary>
+/// <param name="minimumValue">Minimum value</param>
+/// <param name="maximumValue">Maximum value</param>
+/// <returns>Integer value provided by user</returns>
 int ReadInt(int minimumValue, int maximumValue)
 {
     do
@@ -99,11 +103,18 @@ int ReadInt(int minimumValue, int maximumValue)
     } while (true);
 }
 
+/// <summary>Reads an integer from the terminal.</summary>
+/// <param name="minimumValue">Minimum value</param>
+/// <returns>Integer value provided by user</returns>
 int ReadInt(int minimumValue)
 {
     return ReadInt(minimumValue, INT_MAX);
 }
 
+/// <summary>Reads a string from the terminal.</summary>
+/// <param name="message">Message to show</param>
+/// <param name="isRequired">true if the input is required</param>
+/// <returns>String value provided by user.</returns>
 std::string ReadString(std::string message, bool isRequired)
 {
     std::cout << message;
@@ -121,6 +132,11 @@ std::string ReadString(std::string message, bool isRequired)
     return input;
 }
 
+/// <summary>Adds a movie to an array.</summary>
+/// <param name="movies">Array</param>
+/// <param name="size">Size of the array</param>
+/// <param name="movie">Movie to add</param>
+/// <returns>Index of new movie if inserted or -1 otherwise.</returns>
 int AddToMovieArray(Movie movies[], int size, Movie movie)
 {
     //Enumerate the array looking for the first blank movie
@@ -232,14 +248,77 @@ void PointerDemo()
 {
     int localInt = 1234;
 
-    //ppointer to an int, 
-    int* pInt;
+    //Pointer - memory address    
+    //Data points
+    //  Pointer value is a memory address (8 bytes)
+    //  Value pointed to by pointer (dereferenced value) is int (4 bytes)
+    // pointer_decl ::= T* id
+    int* pInt;              //Pointer to an int
     pInt = &localInt;
 
     localInt = 9876;
 
-    //dereferencing a pointer returns the original t value
+    // Dereferencing a pointer returns the original type T
+    //   dereference_op := *ptr
     *pInt = 5678;
+
+    //An uninitialized pointer points to garbage
+    // Initialize pointer to memory 0 which is invalid
+    //  NULL - C version, not preferred as it is still an int
+    //  nullptr - preferred in C++
+    //float* pFloat = NULL;    
+    float* pFloat = nullptr;
+    //pFloat = 0;   Don't do this
+    //pFloat = 1234;
+
+    //Always ensure pointer is valid (not null) before dereferencing
+    //if (pFloat != nullptr) {
+    if (pFloat) {
+        //This is going to crash hard if pointer is NULL
+        *pFloat = 123.45;
+    }
+
+    //initiliazing a pointer
+    //nullptr
+    float localFloat = 123.45;
+
+        //initilie a pointer to a local variable or parameter
+        pFloat = &localFloat; //Address of localFloat, must be a variable
+
+    *pFloat = 456.78; //localfloat = 456.78
+
+    float someFloats[10] = {0};
+    pFloat = &someFloats[1]; //ptr references second element
+
+    //compler error, tpyes must match
+    //pFloat = pInt; //float* = int*
+
+    //dynamic memory
+    //new_op ::= new T returns T*
+    pFloat = new float; 
+    *pFloat = 89.76;
+
+    for (int index = 0; index < 10000; ++index)
+    {
+        pFloat = new float;
+        *pFloat = index;
+
+        //deleting a pointer twice will crash or currupt memory
+        delete pFloat;
+        pFloat = nullptr;
+
+        //ensure you call delete for each pointer you allocate using new
+        delete pFloat;
+        pFloat = nullptr;
+        //*pFloat = index; // using a deallocated pointer may crash or corrupt
+    }
+
+    //pointer assignment must exactly match the types used (no coercion)
+    //pFloat = float*
+    //someFloats[1] = float
+    //&(Et) = T*
+    //&(someFloats[1]) = &(float) = float*
+
 }
 
 int main()
