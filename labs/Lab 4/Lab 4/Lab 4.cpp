@@ -48,6 +48,28 @@ int ReadInitialValues(int values[], int size)
     return count;
 }
 
+/// <summary>Displays the main menu and returns the user's selection.</summary>
+/// <returns>The menu choice entered by the user.</returns>
+char DisplayMenu()
+{
+    std::cout << std::endl;
+    std::cout << "Main Menu" << std::endl;
+    std::cout << "--------------" << std::endl;
+    std::cout << "L)argest" << std::endl;
+    std::cout << "S)mallest" << std::endl;
+    std::cout << "U)m (sum)" << std::endl;
+    std::cout << "M)ean" << std::endl;
+    std::cout << "V)iew Values" << std::endl;
+    std::cout << "I)nsert Values" << std::endl;
+    std::cout << "Q)uit" << std::endl;
+    std::cout << "Enter choice: ";
+
+    char choice;
+    std::cin >> choice;
+
+    return choice;
+}
+
 int main()
 {
     const int MaximumValues = 100;
@@ -64,6 +86,54 @@ int main()
     //Prompt user for initial values
     valueCount = ReadInitialValues(values, MaximumValues);
 
-    //Menu and additional features come later
+    //Menu loop
+    bool done = false;
+    while (!done)
+    {
+        char choice = DisplayMenu();
+
+        switch (choice)
+        {
+            case 'L':
+            case 'l':
+                std::cout << "You selected largest." << std::endl;
+                break;
+
+            case 'S':
+            case 's':
+                std::cout << "You selected smallest." << std::endl;
+                break;
+
+            case 'U':
+            case 'u':
+                std::cout << "You selected sum." << std::endl;
+                break;
+
+            case 'M':
+            case 'm':
+                std::cout << "You selected mean." << std::endl;
+                break;
+
+            case 'V':
+            case 'v':
+                std::cout << "You selected view values." << std::endl;
+                break;
+
+            case 'I':
+            case 'i':
+                std::cout << "You selected insert values." << std::endl;
+                break;
+
+            case 'Q':
+            case 'q':
+                done = true;
+                break;
+
+            default:
+                std::cout << "That value is invalid." << std::endl;
+                break;
+        }
+    }
+
     return 0;
 }
