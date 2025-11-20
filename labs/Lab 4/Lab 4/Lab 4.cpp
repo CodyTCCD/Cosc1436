@@ -16,7 +16,7 @@ void DisplayProgramInfo()
     std::cout << "COSC 1436 Fall 2025" << std::endl << std::endl;
 }
 
-/// <summary>Prompts the user to enter values into the array.</summary>
+/// <summary>Prompts the user to enter initial values.</summary>
 /// <param name="values">Array to store values.</param>
 /// <param name="size">Maximum size allowed.</param>
 /// <returns>The number of valid values entered.</returns>
@@ -32,24 +32,21 @@ int ReadInitialValues(int values[], int size)
         std::cin >> input;
 
         if (input == 0)
-        {
-            //Stop entering values
             break;
-        } else if (input < 0)
-        {
+        else if (input < 0)
             std::cout << "You must enter a value greater than or equal to 0" << std::endl;
-        } else
+        else
         {
             values[count] = input;
-            count = count + 1;   //no ++ operator
+            count = count + 1;
         }
     }
 
     return count;
 }
 
-/// <summary>Displays the main menu and returns the user's selection.</summary>
-/// <returns>The menu choice entered by the user.</returns>
+/// <summary>Displays the main menu.</summary>
+/// <returns>User’s menu choice.</returns>
 char DisplayMenu()
 {
     std::cout << std::endl;
@@ -66,28 +63,153 @@ char DisplayMenu()
 
     char choice;
     std::cin >> choice;
-
     return choice;
+}
+
+/// <summary>Gets the largest value.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Number of valid values.</param>
+/// <returns>The largest value.</returns>
+int GetLargestValue(int values[], int count)
+{
+    if (count <= 0)
+        return 0;
+
+    int largest = values[0];
+    int index = 1;
+
+    while (index < count)
+    {
+        if (values[index] > largest)
+            largest = values[index];
+
+        index = index + 1;
+    }
+
+    return largest;
+}
+
+/// <summary>Gets the smallest value.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Number of valid values.</param>
+/// <returns>The smallest value.</returns>
+int GetSmallestValue(int values[], int count)
+{
+    if (count <= 0)
+        return 0;
+
+    int smallest = values[0];
+    int index = 1;
+
+    while (index < count)
+    {
+        if (values[index] < smallest)
+            smallest = values[index];
+
+        index = index + 1;
+    }
+
+    return smallest;
+}
+
+/// <summary>Gets the sum of the values.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Number of valid values.</param>
+/// <returns>The sum of the values.</returns>
+int GetSum(int values[], int count)
+{
+    int sum = 0;
+    int index = 0;
+
+    while (index < count)
+    {
+        sum = sum + values[index];
+        index = index + 1;
+    }
+
+    return sum;
+}
+
+/// <summary>Gets the mean value.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Number of valid values.</param>
+/// <returns>The mean as a double.</returns>
+double GetMean(int values[], int count)
+{
+    if (count <= 0)
+        return 0.0;
+
+    int sum = GetSum(values, count);
+    double mean = static_cast<double>(sum) / count;
+    return mean;
+}
+
+/// <summary>Displays the values.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Number of valid values.</param>
+void DisplayValues(int values[], int count)
+{
+    if (count <= 0)
+    {
+        std::cout << "No values have been entered." << std::endl;
+        return;
+    }
+
+    int index = 0;
+
+    while (index < count)
+    {
+        std::cout << std::setw(6) << values[index];
+
+        if ((index + 1) % 10 == 0)
+            std::cout << std::endl;
+
+        index = index + 1;
+    }
+
+    std::cout << std::endl;
+}
+
+/// <summary>Inserts additional values.</summary>
+/// <param name="values">Array of values.</param>
+/// <param name="count">Reference to number of valid values.</param>
+/// <param name="size">Maximum size allowed.</param>
+void InsertValues(int values[], int& count, int size)
+{
+    while (count < size)
+    {
+        std::cout << "Enter a value: ";
+
+        int input;
+        std::cin >> input;
+
+        if (input == 0)
+            break;
+        else if (input < 0)
+            std::cout << "You must enter a value greater than or equal to 0" << std::endl;
+        else
+        {
+            values[count] = input;
+            count = count + 1;
+        }
+    }
+
+    if (count >= size)
+        std::cout << "Array is full, cannot insert more values." << std::endl;
 }
 
 int main()
 {
     const int MaximumValues = 100;
-
-    //Array to store user values
     int values[MaximumValues] = {0};
-
-    //Number of valid values entered
     int valueCount = 0;
 
-    //Display program information
     DisplayProgramInfo();
 
-    //Prompt user for initial values
     valueCount = ReadInitialValues(values, MaximumValues);
 
-    //Menu loop
     bool done = false;
+
     while (!done)
     {
         char choice = DisplayMenu();
@@ -96,32 +218,47 @@ int main()
         {
             case 'L':
             case 'l':
-                std::cout << "You selected largest." << std::endl;
+                if (valueCount <= 0)
+                    std::cout << "No values have been entered." << std::endl;
+                else
+                    std::cout << "Largest = " << GetLargestValue(values, valueCount) << std::endl;
                 break;
 
             case 'S':
             case 's':
-                std::cout << "You selected smallest." << std::endl;
+                if (valueCount <= 0)
+                    std::cout << "No values have been entered." << std::endl;
+                else
+                    std::cout << "Smallest = " << GetSmallestValue(values, valueCount) << std::endl;
                 break;
 
             case 'U':
             case 'u':
-                std::cout << "You selected sum." << std::endl;
+                if (valueCount <= 0)
+                    std::cout << "No values have been entered." << std::endl;
+                else
+                    std::cout << "Sum = " << GetSum(values, valueCount) << std::endl;
                 break;
 
             case 'M':
             case 'm':
-                std::cout << "You selected mean." << std::endl;
+                if (valueCount <= 0)
+                    std::cout << "No values have been entered." << std::endl;
+                else
+                {
+                    std::cout << std::fixed << std::setprecision(4);
+                    std::cout << "Mean = " << GetMean(values, valueCount) << std::endl;
+                }
                 break;
 
             case 'V':
             case 'v':
-                std::cout << "You selected view values." << std::endl;
+                DisplayValues(values, valueCount);
                 break;
 
             case 'I':
             case 'i':
-                std::cout << "You selected insert values." << std::endl;
+                InsertValues(values, valueCount, MaximumValues);
                 break;
 
             case 'Q':
