@@ -498,6 +498,34 @@ int* ReturningAPointerDemo(int someValue, int values[])
     return nullptr;
 }
 
+void ConstantDemo()
+{
+    //Context is generally pointers and references
+    int someValue;
+    int* ptrNonconst;       //Non-const means a value can be read or written
+    int const* ptrConst;    //Const means a value can only be read (int const*)    
+    ptrNonconst = &someValue;
+
+    //Can treat a non-const value as const (can treat a writable value as readonly)    
+    ptrConst = ptrNonconst;
+
+    //Cannot treat a const value as non-const (cannot treat a readonly value as writable)
+    //ptrNonconst = ptrConst;
+
+    //In rare cases can remove the constant if you are absolutely sure the value is writable
+    ptrNonconst = (int*)ptrConst;
+    ptrNonconst = const_cast<int*>(ptrConst);
+
+    //6 forms of constant references and pointers, dividing line is *, read right to left
+    // 1)       T *         pointer to T (ptr: RW, value: RW)
+    // 2)       T * const   const pointer to T (ptr: R, value: RW)
+    // 3) T const *         pointer to const T (ptr: RW, value: R)      
+    // 4) const T *         pointer to T const (ptr: RW, value: R)
+    // 5) T const * const   const pointer to const T (ptr: R, value: R)
+    // 6) const T * const   const poitner to T const (ptr: R, value: R)
+    // Forms 3 and 4 are the same, forms 5 and 6 are the same
+}
+
 int main()
 {
     //Movie movie;
