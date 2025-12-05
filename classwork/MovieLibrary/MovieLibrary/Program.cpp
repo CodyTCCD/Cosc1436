@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream> //file ID
+#include <sstream> //stringstream
 
 //Movie details
 struct Movie
@@ -231,7 +233,7 @@ Movie* AddMovie()
     movie->runLength = ReadInt(0);
 
     std::cout << "Enter the release year (1900-2100): ";
-    std::cin >> movie->releaseYear;
+   /* std::cin >> movie->releaseYear;*/
     movie->releaseYear = ReadInt(1900, 2100);
 
     movie->description = ReadString("Enter the optional description: ", false);
@@ -302,6 +304,21 @@ void DeleteMovie(Movie* movies[], int size)
 void EditMovie()
 {
     DisplayWarning("Not implemented yet");
+}
+
+std::string QuoteString(std::string const& value)
+{
+    std::stringstream str; 
+    
+    // if no starting double quote, then add double quote
+    if (value.length() == 0 || value[0] !+ '"')
+        str << '"';
+    str << value;
+    // if no ending double quote, then add double quote
+    if (value.length() == 0 || value[value.length() - 1] ! = '"')
+        str << '"';
+
+    return str.str);
 }
 
 void PointerDemo()
@@ -526,8 +543,58 @@ void ConstantDemo()
     // Forms 3 and 4 are the same, forms 5 and 6 are the same
 }
 
+void LoadMovies(Movie* movies[], int size)
+{
+    //todo: implement this
+}
+
+void SaveMovie(std::ofstream& file, Movie* pMovie)
+{
+    if (!pMovie)
+        return;
+
+    //id, title, release year, run length, isClassic, genres, description
+    file << pMovie->id
+        << ", " << QuoteString(pMovie->title)
+        << ", " << pMovie->releaseYear
+        << ", " << pMovie->runLength
+        << ", " << (pMovie->isClassic ? 1: 0)
+        << ", " << QuoteString(pMovie->genres)
+        << ", " << QuoteString(pMovie->description)
+        << std::endl; 
+}
+
+void SaveMovies(const char* filename, Movie* movies[], int size)
+{
+   /* std::fstream fs;
+    std::ifstream ifs;
+    std::ofstream ofs;*/
+
+    std::ofstream file;
+
+    //to use a file, mist open it
+    //flags (bitwise OR together)
+    // in | out - access mode
+    // binary - text(default) or binary
+    // app | ate | trunc - write mode
+    //app - append (always)
+    //ate - append (by default)
+    // trunc - replace
+    //
+    file.open(filename, std::ios::out | std::ios::trunc);
+    if (file.fail())
+    {
+        DisplayError("unable to save movies");
+        return;
+    };
+   // file << "writing to the file";
+    for (int index = 0; index < size; ++index)
+        SaveMovie(file, movies[index]);
+}
+
 int main()
 {
+    const char* FileName = "movies.csv";
     //Movie movie;
 
     ////Calling pass by reference function
@@ -542,6 +609,8 @@ int main()
     //Cannot calculate the size of an array at runtime so use a const int variable
     const int MaximumMovies = 100;
     Movie* movies[MaximumMovies] = {0};
+
+    LoadMovies(movies, MaximumMovies);
 
     //Display main menu
     bool done = false;
@@ -573,7 +642,7 @@ int main()
             case 'e': EditMovie(); break;
 
             case 'Q':
-            case 'q': done = true;
+            case 'q': SaveMovies(FileName, movies, MaximumMovies); done = true; break;
 
             default: DisplayError("Invalid choice"); break;
         };
