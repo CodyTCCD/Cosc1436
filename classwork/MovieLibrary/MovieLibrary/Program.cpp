@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>  //File IO
+#include <sstream>  //Stringstream
 
 //Movie details
 struct Movie
@@ -17,6 +19,12 @@ struct Movie
     bool isClassic;             //Required, false
     std::string genres;         //Optional (comma separated list of genres)
 };
+
+// Discuss
+void ClearInputBuffer()
+{
+    std::cin.ignore(INT32_MAX, '\n');
+}
 
 /// <summary>Defines possible foreground colors.</summary>
 enum class ForegroundColor {
@@ -31,17 +39,27 @@ enum class ForegroundColor {
     BrightCyan = 96
 };
 
-//Function prototypes
-void DisplayError(std::string const&);
-
+/// <summary>Resets the terminal text color.</summary>
 void ResetTextColor()
 {
     std::cout << "\033[0m";
 }
 
+/// <summary>Set the terminal text color.</summary>
+/// <param name="color">Text color</param>
 void SetTextColor(ForegroundColor color)
 {
     std::cout << "\033[" << (int)color << "m";
+}
+
+/// <summary>Displays an error message.</summary>
+/// <param name="message">Message to display.</param>
+void DisplayError(std::string const& message)
+{
+    //std::cout << "\033[91m" 
+    SetTextColor(ForegroundColor::BrightRed);
+    std::cout << "ERROR: " << message << std::endl;
+    ResetTextColor();
 }
 
 /// <summary>Display a confirmation message.</summary>
@@ -65,16 +83,6 @@ bool Confirm(std::string message)
             std::cin >> input;
         }
     }
-}
-
-/// <summary>Displays an error message.</summary>
-/// <param name="message">Message to display.</param>
-void DisplayError(std::string const& message)
-{
-    //std::cout << "\033[91m" 
-    SetTextColor(ForegroundColor::BrightRed);
-    std::cout << "ERROR: " << message << std::endl;
-    ResetTextColor();
 }
 
 /// <summary>Displays a warning message.</summary>
@@ -231,9 +239,10 @@ Movie* AddMovie()
     movie->runLength = ReadInt(0);
 
     std::cout << "Enter the release year (1900-2100): ";
-    std::cin >> movie->releaseYear;
+    //std::cin >> movie->releaseYear;
     movie->releaseYear = ReadInt(1900, 2100);
 
+    ClearInputBuffer();
     movie->description = ReadString("Enter the optional description: ", false);
 
     // Genres, up to 5
@@ -245,7 +254,11 @@ Movie* AddMovie()
         else if (genre == " ")
             continue;
 
-        movie->genres = movie->genres + ", " + genre;
+        //Fix issue with having no genres to begin with
+        if (movie->genres.length() > 0)
+            movie->genres = movie->genres + ", " + genre;
+        else
+            movie->genres = genre;
     }
 
     movie->isClassic = Confirm("Is this a classic movie?");
@@ -304,244 +317,156 @@ void EditMovie()
     DisplayWarning("Not implemented yet");
 }
 
-void PointerDemo()
+int ParseFields(std::string const& line, std::string fields[], int size)
 {
-    int localInt = 1234;
+    int fieldIndex = 0;
+    std::string field;
+    bool inString = false;
 
-    //Pointer - memory address    
-    //Data points
-    //  Pointer value is a memory address (8 bytes)
-    //  Value pointed to by pointer (dereferenced value) is int (4 bytes)
-    // pointer_decl ::= T* id
-    int* pInt;              //Pointer to an int
-    pInt = &localInt;
-
-    localInt = 9876;
-
-    // Dereferencing a pointer returns the original type T
-    //   dereference_op := *ptr
-    *pInt = 5678;
-
-    //An uninitialized pointer points to garbage
-    // Initialize pointer to memory 0 which is invalid
-    //  NULL - C version, not preferred as it is still an int
-    //  nullptr - preferred in C++
-    //float* pFloat = NULL;    
-    float* pFloat = nullptr;
-    //pFloat = 0;   Don't do this
-    //pFloat = 1234;
-
-    //Always ensure pointer is valid (not null) before dereferencing
-    //if (pFloat != nullptr) {
-    if (pFloat) {
-        //This is going to crash hard if pointer is NULL
-        *pFloat = 123.45;
-    }
-
-    //Initializing a pointer
-    // nullptr
-    float localFloat = 123.45;
-
-    //Initialize a pointer to a local variable or parameter
-    pFloat = &localFloat;  //Address of localFloat, must be a variable
-    *pFloat = 456.78;   //localFloat = 456.78
-
-    //Initialize a pointer to an array element
-    float someFloats[10] = {0};
-    pFloat = &someFloats[1];   //Ptr references second element
-
-    //Compiler error, types must exactly match
-    //pFloat = pInt;   // float* = int*
-
-    //Dynamic memory
-    // new_op ::= new T  returns T*
-    pFloat = new float;
-    *pFloat = 89.76;
-
-    for (int index = 0; index < 10000; ++index)
+    for (int index = 0; index < line.length(); ++index)
     {
-        pFloat = new float;
-        *pFloat = index;
+        if (line[index] == ',')
+        {
+            fields[fieldIndex] = field;
+            field = "";
+            ++fieldIndex;
+        } else if (isspace(line[index]))  //If instring then include
+            continue;
+        else if (line[index] == '"')
+        {
+            field += line[index];
+            inString = !inString;
+        } else
+            field += line[index];
+    };
 
-        //Deleting a pointer twice will crash or corrupt memory unless it is nullptr
-        //Immediately after deleting a pointer you should set it to nullptr
-        delete pFloat;
-        pFloat = nullptr;
-
-        //Ensure you call delete for each pointer you allocate using new
-        delete pFloat;
-        pFloat = nullptr;
-        //*pFloat = index; //Using a deallocated pointer may crash or corrupt
-    }
-
-    //Pointer assignment must exactly match the types used (no coercion)
-    // pFloat = float*
-    // someFloats[1] = float
-    // &(Et) = T*
-    // &(someFloats[1]) = &(float) = float*
-
+    fields[fieldIndex] = field;
+    return fieldIndex;
 }
 
-// Pointers vs pass by ref
-void EditMovieWithPassByReference(Movie& movie)  //C++ with pass by ref, preferred
+Movie* LoadMovie(std::string const& line)
 {
-    movie.title = ReadString("Enter the new title: ", true);
+    if (line == "")
+        return nullptr;
 
-    std::cout << "Enter the new run length: ";
-    movie.runLength = ReadInt(0);
+    Movie* pMovie = new Movie();
+    pMovie->id = 1;
+    pMovie->title = "Movie 1";
+    pMovie->runLength = 100;
+
+    return pMovie;
 }
 
-//Switching from ref to pointers
-// 1. Change ref parameter to pointer
-// 2. Validate the parameter
-// 3. Dereference to get underlying value or use pointer access op
-void EditMovieWithPointer(Movie* movie)  //C with pointers, only if needed
+
+void LoadMovies(const char* filename, Movie* movies[], int size)
 {
-    if (movie == nullptr)
+    std::ifstream file;
+
+    file.open(filename, std::ios::in);
+    if (file.fail())
         return;
 
-    //movie.title = ReadString("Enter the new title: ", true);
-    movie->title = ReadString("Enter the new title: ", true);
-
-    std::cout << "Enter the new run length: ";
-    movie->runLength = ReadInt(0);
-}
-
-void ArrayAndPointerDemo()
-{
-    const int MaxSize = 100;
-
-    int numbers[MaxSize];
-
-    for (int index = 0; index < MaxSize; ++index)
-        numbers[index] = index + 1;
-
-    for (int index = 0; index < MaxSize; ++index)
-        std::cout << numbers[index] << std::endl;
-
-    //Arrays and pointers are interchangeable
-    // - Can assign a pointer to an array and vice versa
-    // - Can use array element operator on pointer
-    // - Can use pointer dereference on array variable
-    // - Can use either array element operator or pointer arithmetic to get to elements
-    // arr[N] = *(arr + N)
-    // Pointer arithmetic means adding/subtracting int from pointer moves the value
-    //   by a full element size, not bytes (cannot point into a partial element)
-    int* pNumbers = numbers;
-    for (int index = 0; index < MaxSize; ++index)
-        pNumbers[index] = index + 1;   //Can use array syntax with pointers and vice versa
-
-    //Can enumerate without using array element operator
-    int* pElement = numbers;
-    for (int index = 0; index < MaxSize; ++index)
-        //std::cout << numbers[index] << std::endl;
-        std::cout << *(numbers + index) << std::endl;
-
-    pElement = numbers;
-    for (int index = 0; index < MaxSize; ++index)
-        //std::cout << numbers[index] << std::endl;
-        std::cout << *(pElement++) << std::endl;
-}
-
-int* ResizeArray(int array[], int oldSize, int newSize)
-{
-    if (newSize <= 0)
+    //Read each line, until end of file
+    // eof()
+    //if (file.eof())
+        //end of file
+    for (int index = 0; index < size && !file.eof(); ++index)
     {
-        DisplayError("I don't think so");
-        return nullptr;
+        std::string line;
+        std::getline(file, line);
+
+        //Error handling
+        bool isFailed = file.fail();
+        bool isBad = file.bad();  //Don't generally use this one
+
+        bool isGood = file.good();   //Nobody really uses this
+        if (file.good())
+            ;  //Read was successful
+
+        //Resets a failed file stream
+        if (file.bad())
+            file.clear();
+
+        Movie* pMovie = LoadMovie(line);
+        if (pMovie)
+            movies[index] = pMovie;
+
+        //file.getline();  //C-String version
     }
-    //int* pNewValue = new int;
-
-    //newSize > 0
-    int* pNewArray = new int[newSize];
-
-    //Init the array because we cannot use init syntax with new
-    for (int index = 0; index < newSize; ++index)
-        pNewArray[index] = 0;
-
-    //Copy values from old to new array
-    oldSize = (oldSize < newSize) ? oldSize : newSize;
-    for (int index = 0; index < oldSize; ++index)
-        pNewArray[index] = array[index];
-
-    return pNewArray;
 }
 
-void DeleteArray(int* array)
+std::string QuoteString(std::string const& value)
 {
-    // Rules
-    // 1. Array better have been allocated using new
-    // 2. You must delete the entire array using delete[]
-    // 3. If delete[] is called on a null ptr it will most likely crash
-    if (array)
-        delete[] array;
-    array = nullptr;
+    std::stringstream str;
+
+    //If no starting double quote, then add double quote
+    if (value.length() == 0 || value[0] != '"')
+        str << '"';
+    str << value;
+
+    //If no ending double quote, then add double quote
+    if (value.length() == 0 || value[value.length() - 1] != '"')
+        str << '"';
+
+    return str.str();
 }
 
-int youWillNeverDoThis = 100;
-int* ReturningAPointerDemo(int someValue, int values[])
+void SaveMovie(std::ofstream& file, Movie* pMovie)
 {
-    int* ptr = nullptr;
+    if (!pMovie)
+        return;
 
-    // Valid cases for returning a pointer
-    // 1. Dynamically allocated memory using new
-    ptr = new int;
-    // 2. Elements of an array parameter
-    ptr = &values[0];
-    // 3. Global variables
-    ptr = &youWillNeverDoThis;
-
-    // Invalid cases
-    // 1. Parameters  (ptr = &someValue)
-    // 2. Local variables (int localVar; ptr= &localVar;)
-
-    return nullptr;
+    // Id, title, release year, run length, isClassic, genres, description
+    file << pMovie->id
+        << ", " << QuoteString(pMovie->title)
+        << ", " << pMovie->releaseYear
+        << ", " << pMovie->runLength
+        << ", " << (pMovie->isClassic ? 1 : 0)
+        << ", " << QuoteString(pMovie->genres)
+        << ", " << QuoteString(pMovie->description)
+        << std::endl;
 }
 
-void ConstantDemo()
+void SaveMovies(const char* filename, Movie* movies[], int size)
 {
-    //Context is generally pointers and references
-    int someValue;
-    int* ptrNonconst;       //Non-const means a value can be read or written
-    int const* ptrConst;    //Const means a value can only be read (int const*)    
-    ptrNonconst = &someValue;
+    //std::fstream fs;
+    //std::ifstream ifs;
+    //std::ofstream ofs;
 
-    //Can treat a non-const value as const (can treat a writable value as readonly)    
-    ptrConst = ptrNonconst;
+    std::ofstream file;
 
-    //Cannot treat a const value as non-const (cannot treat a readonly value as writable)
-    //ptrNonconst = ptrConst;
+    //To use a file, must open it
+    // Flags (bitwise OR together)
+    //   in | out - access mode
+    //   binary - text (default) or binary
+    //   app | ate | trunc - write mode
+    //        app - append (always)
+    //        ate - append (by default)
+    //        trunc - replace 
+    file.open(filename, std::ios::out | std::ios::trunc);
+    if (file.fail())
+    {
+        DisplayError("Unable to save movies");
+        return;
+    };
 
-    //In rare cases can remove the constant if you are absolutely sure the value is writable
-    ptrNonconst = (int*)ptrConst;
-    ptrNonconst = const_cast<int*>(ptrConst);
+    //file << "Writing to the file";
+    for (int index = 0; index < size; ++index)
+        SaveMovie(file, movies[index]);
 
-    //6 forms of constant references and pointers, dividing line is *, read right to left
-    // 1)       T *         pointer to T (ptr: RW, value: RW)
-    // 2)       T * const   const pointer to T (ptr: R, value: RW)
-    // 3) T const *         pointer to const T (ptr: RW, value: R)      
-    // 4) const T *         pointer to T const (ptr: RW, value: R)
-    // 5) T const * const   const pointer to const T (ptr: R, value: R)
-    // 6) const T * const   const poitner to T const (ptr: R, value: R)
-    // Forms 3 and 4 are the same, forms 5 and 6 are the same
+    //Release the file
+    file.close();
 }
 
 int main()
 {
-    //Movie movie;
-
-    ////Calling pass by reference function
-    //EditMovieWithPassByReference(movie);
-
-    ////Calling with pointer 
-    //// 4. Must use address of if normal variable, or pointer
-    //EditMovieWithPointer(&movie);
-
-    //PointerDemo();
+    const char* FileName = "movies.csv";
 
     //Cannot calculate the size of an array at runtime so use a const int variable
     const int MaximumMovies = 100;
     Movie* movies[MaximumMovies] = {0};
+
+    LoadMovies(FileName, movies, MaximumMovies);
 
     //Display main menu
     bool done = false;
@@ -557,6 +482,7 @@ int main()
 
         char choice;
         std::cin >> choice;
+        ClearInputBuffer();
 
         switch (choice)
         {
@@ -573,7 +499,7 @@ int main()
             case 'e': EditMovie(); break;
 
             case 'Q':
-            case 'q': done = true;
+            case 'q': SaveMovies(FileName, movies, MaximumMovies); done = true; break;
 
             default: DisplayError("Invalid choice"); break;
         };
