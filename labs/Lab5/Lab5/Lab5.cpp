@@ -24,15 +24,12 @@ void DisplayProgramInfo()
 }
 
 /// <summary>Displays an error message.</summary>
-/// <param name="message">Message to display.</param>
 void DisplayError(std::string const &message)
 {
     std::cout << "ERROR: " << message << std::endl;
 }
 
 /// <summary>Prompts the user for confirmation.</summary>
-/// <param name="message">Message to display.</param>
-/// <returns>True if the user confirms, otherwise false.</returns>
 bool Confirm(std::string const &message)
 {
     std::string input;
@@ -54,14 +51,12 @@ bool Confirm(std::string const &message)
         }
 
         DisplayError("You must enter Y or N.");
-
         std::cout << message << " (Y/N): ";
         std::cin >> input;
     }
 }
 
 /// <summary>Displays the main menu and returns the user's choice.</summary>
-/// <returns>The menu option selected by the user.</returns>
 char GetMenuChoice()
 {
     std::cout << "Main Menu" << std::endl;
@@ -79,55 +74,14 @@ char GetMenuChoice()
     if (input.empty())
         return ' ';
 
-    char choice = static_cast<char>(std::toupper(input[0]));
-    return choice;
-}
-
-/// <summary>Displays all stops in the trip.</summary>
-void HandleViewTrip(Stop* trip[], int size)
-{
-    int count = 0;
-
-    std::cout << "Stop   Location" << std::endl;
-    std::cout << "-------------------------" << std::endl;
-
-    for (int i = 0; i < size; ++i)
-    {
-        if (trip[i] == nullptr)
-            break;   // no more stops
-
-        count++;
-
-        std::cout << count << "      ("
-            << trip[i]->x << ", " << trip[i]->y
-            << ")" << std::endl;
-    }
-
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "Total stops: " << count << std::endl;
-}
-
-/// <summary>Handles the "remove stop" menu option (not yet implemented).</summary>
-void HandleRemoveStop(Stop *trip[], int size)
-{
-    std::cout << "Remove Stop is not implemented yet." << std::endl;
-    // Future stories will add the real logic here.
-}
-
-/// <summary>Handles the "clear trip" menu option (not yet implemented).</summary>
-void HandleClearTrip(Stop *trip[], int size)
-{
-    std::cout << "Clear Trip is not implemented yet." << std::endl;
-    // Future stories will add the real logic here.
+    return static_cast<char>(std::toupper(input[0]));
 }
 
 /// <summary>Prompts the user for valid stop coordinates.</summary>
-/// <returns>A pointer to a new Stop with validated X/Y values.</returns>
 Stop* ReadStopCoordinates()
 {
     int x = 0, y = 0;
 
-    // X coordinate
     do
     {
         std::cout << "Enter X (-100 to 100): ";
@@ -138,7 +92,6 @@ Stop* ReadStopCoordinates()
 
     } while (x < -100 || x > 100);
 
-    // Y coordinate
     do
     {
         std::cout << "Enter Y (-100 to 100): ";
@@ -152,15 +105,10 @@ Stop* ReadStopCoordinates()
     Stop* newStop = new Stop;
     newStop->x = x;
     newStop->y = y;
-
     return newStop;
 }
 
 /// <summary>Adds a stop to the trip array.</summary>
-/// <param name="trip">Array of stop pointers.</param>
-/// <param name="size">Size of the array.</param>
-/// <param name="stop">Stop pointer to add.</param>
-/// <returns>True if added successfully; false if trip is full.</returns>
 bool AddStopToTrip(Stop* trip[], int size, Stop* stop)
 {
     for (int i = 0; i < size; ++i)
@@ -172,7 +120,7 @@ bool AddStopToTrip(Stop* trip[], int size, Stop* stop)
         }
     }
 
-    return false; // trip full
+    return false;
 }
 
 /// <summary>Handles the Add Stop menu option.</summary>
@@ -183,47 +131,132 @@ void HandleAddStop(Stop* trip[], int size)
     if (!AddStopToTrip(trip, size, newStop))
     {
         DisplayError("Trip is full. Stop cannot be added.");
-        delete newStop;  // clean up memory
+        delete newStop;
     } else
     {
         std::cout << "Stop added successfully." << std::endl;
     }
 }
 
+/// <summary>Displays all stops in the trip.</summary>
+void HandleViewTrip(Stop* trip[], int size)
+{
+    int count = 0;
+
+    std::cout << "Stop   Location" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (trip[i] == nullptr)
+            break;
+
+        count++;
+        std::cout << count << "      (" << trip[i]->x << ", " << trip[i]->y << ")" << std::endl;
+    }
+
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "Total stops: " << count << std::endl;
+}
+
+/// <summary>Returns the stop pointer for the given stop number (1-based).</summary>
+Stop* GetStopByNumber(Stop* trip[], int size, int stopNumber)
+{
+    if (stopNumber < 1 || stopNumber > size)
+        return nullptr;
+
+    int index = stopNumber - 1;
+
+    return trip[index];
+}
+
+/// <summary>Removes a stop and compacts the array.</summary>
+void RemoveStopFromTrip(Stop* trip[], int size, Stop* stop)
+{
+    if (stop == nullptr)
+        return;
+
+    int removeIndex = -1;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (trip[i] == stop)
+        {
+            removeIndex = i;
+            break;
+        }
+    }
+
+    if (removeIndex == -1)
+        return;
+
+    delete trip[removeIndex];
+    trip[removeIndex] = nullptr;
+
+    int newIndex = removeIndex;
+
+    for (int i = removeIndex + 1; i < size; ++i)
+    {
+        if (trip[i] == nullptr)
+            break;
+
+        trip[newIndex] = trip[i];
+        newIndex++;
+    }
+
+    trip[newIndex] = nullptr;
+}
+
+/// <summary>Handles the Remove Stop menu option.</summary>
+void HandleRemoveStop(Stop* trip[], int size)
+{
+    std::cout << "Enter stop number to remove: ";
+    int stopNumber = 0;
+    std::cin >> stopNumber;
+
+    if (stopNumber < 1)
+    {
+        DisplayError("Stop number must be 1 or higher.");
+        return;
+    }
+
+    Stop* stop = GetStopByNumber(trip, size, stopNumber);
+
+    if (stop == nullptr)
+    {
+        DisplayError("Stop not found.");
+        return;
+    }
+
+    RemoveStopFromTrip(trip, size, stop);
+    std::cout << "Stop removed successfully." << std::endl;
+}
+
+/// <summary>Handles the Clear Trip menu option (not yet implemented).</summary>
+void HandleClearTrip(Stop* trip[], int size)
+{
+    std::cout << "Clear Trip is not implemented yet." << std::endl;
+}
 
 int main()
 {
-    // Story 1 – program info
     DisplayProgramInfo();
 
-    // Story 3 – create trip array using pointers
     const int MaximumStops = 100;
-    Stop *trip[MaximumStops] = {nullptr};
+    Stop* trip[MaximumStops] = {nullptr};
 
     bool done = false;
 
-    // Story 2 – main menu loop with quit confirmation
     while (!done)
     {
         char choice = GetMenuChoice();
 
         switch (choice)
         {
-            case 'A':
-                HandleAddStop(trip, MaximumStops);
-                break;
-
-            case 'V':
-                HandleViewTrip(trip, MaximumStops);
-                break;
-
-            case 'R':
-                HandleRemoveStop(trip, MaximumStops);
-                break;
-
-            case 'C':
-                HandleClearTrip(trip, MaximumStops);
-                break;
+            case 'A': HandleAddStop(trip, MaximumStops); break;
+            case 'V': HandleViewTrip(trip, MaximumStops); break;
+            case 'R': HandleRemoveStop(trip, MaximumStops); break;
+            case 'C': HandleClearTrip(trip, MaximumStops); break;
 
             case 'Q':
                 if (Confirm("Are you sure you want to quit?"))
@@ -238,9 +271,5 @@ int main()
         std::cout << std::endl;
     }
 
-    // Later, when stops are dynamically allocated, this is where
-    // they will be cleaned up before the program ends.
-
     return 0;
 }
-
