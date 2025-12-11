@@ -83,18 +83,28 @@ char GetMenuChoice()
     return choice;
 }
 
-/// <summary>Handles the "add stop" menu option (not yet implemented).</summary>
-void HandleAddStop(Stop *trip[], int size)
+/// <summary>Displays all stops in the trip.</summary>
+void HandleViewTrip(Stop* trip[], int size)
 {
-    std::cout << "Add Stop is not implemented yet." << std::endl;
-    // Future stories will add the real logic here.
-}
+    int count = 0;
 
-/// <summary>Handles the "view trip" menu option (not yet implemented).</summary>
-void HandleViewTrip(Stop *trip[], int size)
-{
-    std::cout << "View Trip is not implemented yet." << std::endl;
-    // Future stories will add the real logic here.
+    std::cout << "Stop   Location" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (trip[i] == nullptr)
+            break;   // no more stops
+
+        count++;
+
+        std::cout << count << "      ("
+            << trip[i]->x << ", " << trip[i]->y
+            << ")" << std::endl;
+    }
+
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "Total stops: " << count << std::endl;
 }
 
 /// <summary>Handles the "remove stop" menu option (not yet implemented).</summary>
@@ -110,6 +120,76 @@ void HandleClearTrip(Stop *trip[], int size)
     std::cout << "Clear Trip is not implemented yet." << std::endl;
     // Future stories will add the real logic here.
 }
+
+/// <summary>Prompts the user for valid stop coordinates.</summary>
+/// <returns>A pointer to a new Stop with validated X/Y values.</returns>
+Stop* ReadStopCoordinates()
+{
+    int x = 0, y = 0;
+
+    // X coordinate
+    do
+    {
+        std::cout << "Enter X (-100 to 100): ";
+        std::cin >> x;
+
+        if (x < -100 || x > 100)
+            DisplayError("X must be between -100 and 100.");
+
+    } while (x < -100 || x > 100);
+
+    // Y coordinate
+    do
+    {
+        std::cout << "Enter Y (-100 to 100): ";
+        std::cin >> y;
+
+        if (y < -100 || y > 100)
+            DisplayError("Y must be between -100 and 100.");
+
+    } while (y < -100 || y > 100);
+
+    Stop* newStop = new Stop;
+    newStop->x = x;
+    newStop->y = y;
+
+    return newStop;
+}
+
+/// <summary>Adds a stop to the trip array.</summary>
+/// <param name="trip">Array of stop pointers.</param>
+/// <param name="size">Size of the array.</param>
+/// <param name="stop">Stop pointer to add.</param>
+/// <returns>True if added successfully; false if trip is full.</returns>
+bool AddStopToTrip(Stop* trip[], int size, Stop* stop)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        if (trip[i] == nullptr)
+        {
+            trip[i] = stop;
+            return true;
+        }
+    }
+
+    return false; // trip full
+}
+
+/// <summary>Handles the Add Stop menu option.</summary>
+void HandleAddStop(Stop* trip[], int size)
+{
+    Stop* newStop = ReadStopCoordinates();
+
+    if (!AddStopToTrip(trip, size, newStop))
+    {
+        DisplayError("Trip is full. Stop cannot be added.");
+        delete newStop;  // clean up memory
+    } else
+    {
+        std::cout << "Stop added successfully." << std::endl;
+    }
+}
+
 
 int main()
 {
